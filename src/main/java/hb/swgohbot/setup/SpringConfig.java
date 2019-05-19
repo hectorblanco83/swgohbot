@@ -1,4 +1,4 @@
-package hb.swgohbot.hb.swgohbot.setup;
+package hb.swgohbot.setup;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
