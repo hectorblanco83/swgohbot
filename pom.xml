@@ -13,7 +13,8 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-		<spring.boot.version>2.1.4.RELEASE</spring.boot.version>
+		<junit-jupiter.version>5.3.2</junit-jupiter.version>
+		<mockito.version>2.24.0</mockito.version>
 	</properties>
 
 
@@ -54,6 +55,38 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- Project Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.8</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Apache Commons -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>4.3</version>
+		</dependency>
+
+		<!-- Google Annotations Gallery -->
+		<dependency>
+			<groupId>com.google.gag</groupId>
+			<artifactId>gag</artifactId>
+			<version>1.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gag</groupId>
+			<artifactId>gag-agent</artifactId>
+			<version>1.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>jsr305</artifactId>
+			<version>3.0.2</version>
+		</dependency>
+
 	</dependencies>
 
 
@@ -64,6 +97,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+
 	</build>
 
 
