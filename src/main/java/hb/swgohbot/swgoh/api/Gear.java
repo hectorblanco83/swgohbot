@@ -74,4 +74,10 @@ public class Gear implements Serializable {
 	public int hashCode() {
 		return Objects.hash(getId());
 	}
+	
+	
+	@Override
+	public String toString() {
+		return "Gear{ id='" + id + "', name=" + name + ", tier=" + tier + "}";
+	}
 }

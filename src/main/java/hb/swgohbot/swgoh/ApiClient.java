@@ -133,6 +133,7 @@ public class ApiClient {
 		
 		LOGGER.info("Calling swgoh.gg");
 		ResponseEntity<List<Gear>> response = restTemplate.exchange("https://swgoh.gg/api/gear/", HttpMethod.GET, entity, new ParameterizedTypeReference<List<Gear>>() {});
+		LOGGER.debug("gear list received: " + response.getBody());
 		LOGGER.info("swgoh.gg response received!");
 		return response.getBody();
 	}

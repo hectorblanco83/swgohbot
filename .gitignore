@@ -1,4 +1,10 @@
 # config files
+/.config/
 /.idea/
 *.iml
+
+
+# resources / compiled / logs
+/logs/
+/target/
 
