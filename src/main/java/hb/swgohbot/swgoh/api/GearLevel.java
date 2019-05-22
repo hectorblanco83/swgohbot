@@ -1,10 +1,9 @@
 package hb.swgohbot.swgoh.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import hb.swgohbot.setup.SpringContextProvider;
 import hb.swgohbot.swgoh.ApiClient;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,9 +24,11 @@ public class GearLevel implements Serializable {
 	private List<Gear> gears = new ArrayList<>();
 	
 	
+	
 	@JsonProperty("gear")
 	void parseGears(List<String> data) {
-		List<Gear> gearList = ApiClient.getInstance().getGearList();
+		ApiClient apiClient = SpringContextProvider.getContext().getBean(ApiClient.class);
+		List<Gear> gearList = apiClient.getGearList();
 		for(String gearId : data) {
 			Optional<Gear> optionalGear = gearList.stream().filter(gear -> gear.getId().equals(gearId)).findFirst();
 			optionalGear.ifPresent(gear -> gears.add(gear));
