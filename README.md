@@ -1,6 +1,6 @@
 # SWGOH BOT <br/> A Telegram Bot for Star Wars: Galaxy of Heroes <sup>&reg;</sup>
 
-[![CircleCI](https://circleci.com/gh/hectorblanco83/swgohbot/tree/master.svg?style=svg)](https://circleci.com/gh/hectorblanco83/swgohbot/tree/master)
+[![CircleCI](https://circleci.com/gh/hectorblanco83/swgohbot.svg?style=svg&circle-token=a0a85bf8785a00bac0ca8657afc749748e3989c1)](https://circleci.com/gh/hectorblanco83/swgohbot)
 
 SwGohBot it's a Telegram bot to help gild leaders and officer to manage their gild, with useful commands
 
