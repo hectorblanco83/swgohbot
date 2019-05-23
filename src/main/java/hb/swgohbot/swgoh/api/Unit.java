@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,10 +17,8 @@ import java.util.stream.Collectors;
  */
 @Getter
 @Setter
+@Log4j
 public class Unit extends BaseCharacter {
-	
-	// log
-	private static Logger LOGGER = Logger.getLogger(Unit.class);
 	
 	@JsonProperty("rarity")
 	private Integer rarity;
@@ -58,8 +56,8 @@ public class Unit extends BaseCharacter {
 		abilitiesData.forEach(map -> abilities.add(new ObjectMapper().convertValue(map, Ability.class)));
 		
 		@SuppressWarnings("unchecked")
-		List<String> zetaAbilities = (List<String>) data.get("zeta_abilities");
-		setZetaAbilitiesId(zetaAbilities);
+		List<String> dataZetaAbilities = (List<String>) data.get("zeta_abilities");
+		setZetaAbilitiesId(dataZetaAbilities);
 		
 		@SuppressWarnings("unchecked")
 		List<LinkedHashMap> gearsData = (List<LinkedHashMap>) data.get("gear");

@@ -26,14 +26,12 @@ import java.util.Optional;
 @Log4j
 public class ApiClient {
 	
+	// LOG MSG
+	private static final String LOG_CALLING_SWGOH_GG = "Calling swgoh.gg";
+	private static final String LOG_SWGOH_GG_RESPONSE_RECEIVED = "swgoh.gg response received!";
+	
 	// user-agent property to send in http connections
 	private static final String SWGOH_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36";
-	
-	
-	/**
-	 * Default constructor
-	 */
-	public ApiClient() {}
 	
 	
 	private HttpEntity<String> getHeaderEntity() {
@@ -50,9 +48,9 @@ public class ApiClient {
 		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<String> entity = getHeaderEntity();
 		
-		LOGGER.info("Calling swgoh.gg");
+		LOGGER.info(LOG_CALLING_SWGOH_GG);
 		ResponseEntity<Guild> response = restTemplate.exchange("https://swgoh.gg/api/guild/8070/", HttpMethod.GET, entity, Guild.class);
-		LOGGER.info("swgoh.gg response received!");
+		LOGGER.info(LOG_SWGOH_GG_RESPONSE_RECEIVED);
 		return response.getBody();
 	}
 	
@@ -62,9 +60,9 @@ public class ApiClient {
 		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<String> entity = getHeaderEntity();
 		
-		LOGGER.info("Calling swgoh.gg");
+		LOGGER.info(LOG_CALLING_SWGOH_GG);
 		ResponseEntity<Player> response = restTemplate.exchange("https://swgoh.gg/api/player/" + allyCode, HttpMethod.GET, entity, Player.class);
-		LOGGER.info("swgoh.gg response received!");
+		LOGGER.info(LOG_SWGOH_GG_RESPONSE_RECEIVED);
 		
 		return response.getBody();
 	}
@@ -83,9 +81,10 @@ public class ApiClient {
 		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<String> entity = getHeaderEntity();
 		
-		LOGGER.info("Calling swgoh.gg");
+		LOGGER.info(LOG_CALLING_SWGOH_GG);
 		ResponseEntity<List<Character>> response = restTemplate.exchange("https://swgoh.gg/api/characters/", HttpMethod.GET, entity, new ParameterizedTypeReference<List<Character>>() {});
-		LOGGER.info("swgoh.gg response received!");
+		LOGGER.info(LOG_SWGOH_GG_RESPONSE_RECEIVED);
+		
 		return response.getBody();
 	}
 	
@@ -103,9 +102,9 @@ public class ApiClient {
 		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<String> entity = getHeaderEntity();
 		
-		LOGGER.info("Calling swgoh.gg");
+		LOGGER.info(LOG_CALLING_SWGOH_GG);
 		ResponseEntity<List<Ship>> response = restTemplate.exchange("https://swgoh.gg/api/ships/", HttpMethod.GET, entity, new ParameterizedTypeReference<List<Ship>>() {});
-		LOGGER.info("swgoh.gg response received!");
+		LOGGER.info(LOG_SWGOH_GG_RESPONSE_RECEIVED);
 		return response.getBody();
 	}
 	
@@ -131,10 +130,10 @@ public class ApiClient {
 		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<String> entity = getHeaderEntity();
 		
-		LOGGER.info("Calling swgoh.gg");
+		LOGGER.info(LOG_CALLING_SWGOH_GG);
 		ResponseEntity<List<Gear>> response = restTemplate.exchange("https://swgoh.gg/api/gear/", HttpMethod.GET, entity, new ParameterizedTypeReference<List<Gear>>() {});
 		LOGGER.debug("gear list received: " + response.getBody());
-		LOGGER.info("swgoh.gg response received!");
+		LOGGER.info(LOG_SWGOH_GG_RESPONSE_RECEIVED);
 		return response.getBody();
 	}
 	

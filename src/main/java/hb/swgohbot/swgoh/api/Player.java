@@ -49,8 +49,8 @@ public class Player implements Comparable {
 		setUrl((String) data.get("url"));
 		setGalaticPower((Integer) data.get("galactic_power"));
 		try {
-			Date lastUpdated = new SimpleDateFormat("yyyy-MM-dd").parse((String) data.get("last_updated"));
-			setLastUpdated(lastUpdated.getTime());
+			Date dataLastUpdated = new SimpleDateFormat("yyyy-MM-dd").parse((String) data.get("last_updated"));
+			setLastUpdated(dataLastUpdated.getTime());
 		} catch(ParseException e) {
 			LOGGER.error("Error parsing player's last update " + data.get("last_updated"), e);
 		}
