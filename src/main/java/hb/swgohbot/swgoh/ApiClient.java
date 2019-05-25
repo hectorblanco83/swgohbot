@@ -1,8 +1,10 @@
 package hb.swgohbot.swgoh;
 
+import com.google.common.collect.Lists;
 import hb.swgohbot.swgoh.api.Character;
 import hb.swgohbot.swgoh.api.*;
 import lombok.extern.log4j.Log4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
@@ -10,8 +12,8 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,9 +23,9 @@ import java.util.Optional;
  *
  * @author Hector Blanco
  */
+@Log4j
 @Service
 @CacheConfig(cacheNames = {"swgoh"})
-@Log4j
 public class ApiClient {
 	
 	// LOG MSG
@@ -34,22 +36,42 @@ public class ApiClient {
 	private static final String SWGOH_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36";
 	
 	
+	@Value("${swgoh.gild.id}")
+	private String myGuildId;
+	
+	@Value("${swgoh.api.url}")
+	private String apiUrl;
+	
+	// the rest template
+	private final RestTemplate restTemplate;
+	
+	
+	public ApiClient(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
+	}
+	
+	
 	private HttpEntity<String> getHeaderEntity() {
 		HttpHeaders headers = new HttpHeaders();
-		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+		headers.setAccept(Lists.newArrayList(MediaType.APPLICATION_JSON));
 		headers.add("user-agent", SWGOH_USER_AGENT);
 		return new HttpEntity<>("parameters", headers);
 	}
 	
-
+	
 	@Cacheable
-	public Guild getGuild() {
+	public Guild getMyGuild() {
+		return getGuild(myGuildId);
+	}
+	
+	
+	@Cacheable
+	public Guild getGuild(String guildID) {
 		LOGGER.info("Refreshing Guild information");
-		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<String> entity = getHeaderEntity();
 		
 		LOGGER.info(LOG_CALLING_SWGOH_GG);
-		ResponseEntity<Guild> response = restTemplate.exchange("https://swgoh.gg/api/guild/8070/", HttpMethod.GET, entity, Guild.class);
+		ResponseEntity<Guild> response = restTemplate.exchange(apiUrl + "/guild/" + guildID + "/", HttpMethod.GET, entity, Guild.class);
 		LOGGER.info(LOG_SWGOH_GG_RESPONSE_RECEIVED);
 		return response.getBody();
 	}
@@ -57,17 +79,17 @@ public class ApiClient {
 	
 	@Cacheable
 	public Player getPlayer(String allyCode) {
-		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<String> entity = getHeaderEntity();
 		
 		LOGGER.info(LOG_CALLING_SWGOH_GG);
-		ResponseEntity<Player> response = restTemplate.exchange("https://swgoh.gg/api/player/" + allyCode, HttpMethod.GET, entity, Player.class);
+		ResponseEntity<Player> response = restTemplate.exchange(apiUrl + "/player/" + allyCode, HttpMethod.GET, entity, Player.class);
 		LOGGER.info(LOG_SWGOH_GG_RESPONSE_RECEIVED);
 		
 		return response.getBody();
 	}
 	
 	
+	@Nullable
 	public Character getCharacter(String charId) {
 		List<Character> characterList = getCharacterList();
 		Optional<Character> optionalGear = characterList.stream().filter(character -> character.getId().equals(charId)).findFirst();
@@ -78,17 +100,17 @@ public class ApiClient {
 	@Cacheable
 	public List<Character> getCharacterList() {
 		LOGGER.info("Refreshing Characters information");
-		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<String> entity = getHeaderEntity();
 		
 		LOGGER.info(LOG_CALLING_SWGOH_GG);
-		ResponseEntity<List<Character>> response = restTemplate.exchange("https://swgoh.gg/api/characters/", HttpMethod.GET, entity, new ParameterizedTypeReference<List<Character>>() {});
+		ResponseEntity<List<Character>> response = restTemplate.exchange(apiUrl + "/characters/", HttpMethod.GET, entity, new ParameterizedTypeReference<List<Character>>() {}, new Object[]{});
 		LOGGER.info(LOG_SWGOH_GG_RESPONSE_RECEIVED);
 		
 		return response.getBody();
 	}
 	
 	
+	@Nullable
 	public Ship getShip(String shipId) {
 		List<Ship> shipList = getShipList();
 		Optional<Ship> optionalGear = shipList.stream().filter(ship -> ship.getId().equals(shipId)).findFirst();
@@ -99,11 +121,11 @@ public class ApiClient {
 	@Cacheable
 	public List<Ship> getShipList() {
 		LOGGER.info("Refreshing Ships information");
-		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<String> entity = getHeaderEntity();
 		
 		LOGGER.info(LOG_CALLING_SWGOH_GG);
-		ResponseEntity<List<Ship>> response = restTemplate.exchange("https://swgoh.gg/api/ships/", HttpMethod.GET, entity, new ParameterizedTypeReference<List<Ship>>() {});
+		ResponseEntity<List<Ship>> response = restTemplate.exchange(apiUrl + "/ships/", HttpMethod.GET, entity, new ParameterizedTypeReference<List<Ship>>() {
+		});
 		LOGGER.info(LOG_SWGOH_GG_RESPONSE_RECEIVED);
 		return response.getBody();
 	}
@@ -127,11 +149,11 @@ public class ApiClient {
 	@Cacheable
 	public List<Gear> getGearList() {
 		LOGGER.info("Refreshing Gear information");
-		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<String> entity = getHeaderEntity();
 		
 		LOGGER.info(LOG_CALLING_SWGOH_GG);
-		ResponseEntity<List<Gear>> response = restTemplate.exchange("https://swgoh.gg/api/gear/", HttpMethod.GET, entity, new ParameterizedTypeReference<List<Gear>>() {});
+		ResponseEntity<List<Gear>> response = restTemplate.exchange(apiUrl + "/gear/", HttpMethod.GET, entity, new ParameterizedTypeReference<List<Gear>>() {
+		});
 		LOGGER.debug("gear list received: " + response.getBody());
 		LOGGER.info(LOG_SWGOH_GG_RESPONSE_RECEIVED);
 		return response.getBody();

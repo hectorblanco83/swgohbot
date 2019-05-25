@@ -2,6 +2,7 @@ package hb.swgohbot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.telegram.telegrambots.ApiContextInitializer;
 
 
 /**
@@ -18,6 +19,11 @@ public class Application {
 	 * @param args Command line arguments
 	 */
 	public static void main(String[] args) {
+		
+		// Telegram Bot's initialization
+		ApiContextInitializer.init();
+		
+		// Springboot run
 		SpringApplication.run(Application.class, args);
 	}
 	
