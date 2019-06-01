@@ -9,6 +9,26 @@ SwGohBot it's a Telegram bot to help gild leaders and officer to manage their gi
 This bot use the API from swgoh.gg (https://swgoh.gg/api/) to retrieve gild's information
 
 ---
+### Offline Mode
+<p>This bot usually query swgoh.gg/api to retrieve all information that it needs.</p> 
+<p>
+Although swgoh.gg/api works perfectly, sometimes they have to deal with some huge traffic, specially when Territory 
+Wars or new phases in Territory Battles start. To avoid wait times on api calls (and eventually some timeouts) 
+and to avoid being another one to load their servers, this bot can work in an "offline" mode, where it stores it's information
+on a MongoDB instance, refreshing the database at a reasonable period.
+</p>
+To start in offline mode, all it's required is the correct spring profile:
+
+```
+spring.profiles.active=online
+spring.profiles.active=offline
+```   
+and the URL to your mongoDB. I've been using [mLab](https://mlab.com) for quite a while and it works perfectly for me.
+```
+spring.data.mongodb.uri=your_mongodb_connection_url
+```
+
+---
 
 ### Project Lombok
 This project uses [Project Lombok](https://projectlombok.org/), make sure that your IDE is fully configurate to support it! :thumbsup:
