@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -17,6 +18,7 @@ import java.util.Objects;
 @Setter
 public class BaseCharacter implements Serializable {
 	
+	@Id
 	@JsonProperty("base_id")
 	private String id;
 	

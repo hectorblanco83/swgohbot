@@ -64,7 +64,7 @@ public class TelegramBot extends AbilityBot {
 		return Ability
 				.builder()
 				.name("cs")
-				.info("says hello world!")
+				.info("Search for a character within the guild.")
 				.locality(ALL)
 				.privacy(PUBLIC)
 				.action(ctx -> new CharacterSearchAction().doAction(ctx, replyer))

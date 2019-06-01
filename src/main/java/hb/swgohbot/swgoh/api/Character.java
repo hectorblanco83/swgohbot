@@ -3,6 +3,7 @@ package hb.swgohbot.swgoh.api;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 import java.util.Objects;
@@ -15,6 +16,7 @@ import java.util.Objects;
  */
 @Getter
 @Setter
+@Document(collection = "characters")
 public class Character extends DescriptiveCharacter {
 	
 	@JsonProperty("pk")

@@ -1,9 +1,10 @@
 package hb.swgohbot.bot;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hb.swgohbot.repositories.CharacterRepository;
+import hb.swgohbot.repositories.ShipRepository;
 import hb.swgohbot.services.SearchService;
 import hb.swgohbot.setup.SpringContextProvider;
-import hb.swgohbot.swgoh.ApiClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +36,10 @@ class TelegramBotTest {
 	ApplicationContext springContext;
 	
 	@Mock
-	ApiClient apiClient;
+	private ShipRepository shipRepository;
+	
+	@Mock
+	private CharacterRepository characterRepository;
 	
 	@Mock
 	SearchService searchService;
@@ -47,7 +51,7 @@ class TelegramBotTest {
 		sender = mock(MessageSender.class);
 		bot.setSender(sender);
 		
-		searchService = new SearchService(apiClient);
+		searchService = new SearchService(characterRepository, shipRepository);
 		when(springContext.getBean(SearchService.class)).thenReturn(searchService);
 		new SpringContextProvider().setApplicationContext(springContext);
 	}
@@ -63,7 +67,8 @@ class TelegramBotTest {
 		MessageContext context = MessageContext.newContext(update, endUser, CHAT_ID, "vader");
 		
 		when(sender.execute(any())).thenReturn(update.getMessage());
-		when(apiClient.getCharAndShipList()).thenReturn(new ArrayList<>());
+		when(characterRepository.findAll()).thenReturn(new ArrayList<>());
+		when(shipRepository.findAll()).thenReturn(new ArrayList<>());
 		
 		// when
 		bot.searchCharacter().action().accept(context);

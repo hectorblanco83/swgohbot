@@ -1,7 +1,8 @@
 package hb.swgohbot.services;
 
 import com.google.common.collect.Lists;
-import hb.swgohbot.swgoh.ApiClient;
+import hb.swgohbot.repositories.CharacterRepository;
+import hb.swgohbot.repositories.ShipRepository;
 import hb.swgohbot.swgoh.api.BaseCharacter;
 import hb.swgohbot.swgoh.api.Character;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,14 +20,18 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class SearchServiceTest {
 	
-	@Mock
-	private ApiClient apiClient;
 	private SearchService service;
+	
+	@Mock
+	private ShipRepository shipRepository;
+	
+	@Mock
+	private CharacterRepository characterRepository;
 	
 	
 	@BeforeEach
 	void setUp() {
-		service = new SearchService(apiClient);
+		service = new SearchService(characterRepository, shipRepository);
 	}
 	
 	
@@ -37,7 +42,8 @@ class SearchServiceTest {
 		rjt.setName("Rey Jedi Training");
 		Character rsc = new Character();
 		rsc.setName("Rey (Scavenger)");
-		when(apiClient.getCharAndShipList()).thenReturn(Lists.newArrayList(rjt,rsc));
+		when(characterRepository.findAll()).thenReturn(Lists.newArrayList(rjt,rsc));
+		when(shipRepository.findAll()).thenReturn(Lists.newArrayList());
 		
 		// when
 		List<BaseCharacter> characters = service.suggestCharacterFromQuery("rey");
@@ -45,7 +51,8 @@ class SearchServiceTest {
 		// then
 		assertEquals(2, characters.size());
 		assertEquals("Rey (Scavenger)", characters.get(1).getName());
-		verify(apiClient, times(1)).getCharAndShipList();
+		verify(characterRepository, times(1)).findAll();
+		verify(shipRepository, times(1)).findAll();
 	}
 	
 	
@@ -54,7 +61,8 @@ class SearchServiceTest {
 		// given
 		Character vader = new Character();
 		vader.setName("Darth Vader");
-		when(apiClient.getCharAndShipList()).thenReturn(Lists.newArrayList(vader));
+		when(characterRepository.findAll()).thenReturn(Lists.newArrayList(vader));
+		when(shipRepository.findAll()).thenReturn(Lists.newArrayList());
 		
 		// when
 		List<BaseCharacter> characters = service.suggestCharacterFromQuery("Darth Vader");
@@ -62,6 +70,7 @@ class SearchServiceTest {
 		// then
 		assertEquals(1, characters.size());
 		assertEquals("Darth Vader", characters.get(0).getName());
-		verify(apiClient, times(1)).getCharAndShipList();
+		verify(characterRepository, times(1)).findAll();
+		verify(shipRepository, times(1)).findAll();
 	}
 }

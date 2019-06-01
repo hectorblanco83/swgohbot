@@ -1,31 +1,42 @@
 package hb.swgohbot.services;
 
-import hb.swgohbot.swgoh.ApiClient;
+import hb.swgohbot.repositories.CharacterRepository;
+import hb.swgohbot.repositories.ShipRepository;
 import hb.swgohbot.swgoh.api.BaseCharacter;
-import hb.swgohbot.swgoh.api.DescriptiveCharacter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
+/**
+ * Service for search related issues
+ *
+ * @author Hector Blanco
+ */
 @Service
 public class SearchService {
 	
-	// the swgoh.gg/api client
-	private final ApiClient apiClient;
+	private final CharacterRepository characterRepository;
+	private final ShipRepository shipRepository;
 	
 	
-	public SearchService(ApiClient apiClient) {
-		this.apiClient = apiClient;
+	@Autowired
+	public SearchService(CharacterRepository characterRepository, ShipRepository shipRepository) {
+		this.characterRepository = characterRepository;
+		this.shipRepository = shipRepository;
 	}
 	
 	
 	public List<BaseCharacter> suggestCharacterFromQuery(String... query) {
-		List<DescriptiveCharacter> allChars = apiClient.getCharAndShipList();
+		List<BaseCharacter> allChars = new ArrayList<>();
+		allChars.addAll(characterRepository.findAll());
+		allChars.addAll(shipRepository.findAll());
 		
 		// Search by name equals
 		String joinedQuery = StringUtils.join(query, " ");

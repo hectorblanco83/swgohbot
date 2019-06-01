@@ -245,4 +245,30 @@ class ApiClientTest {
 		assertNull(gear);
 	}
 	
+	
+	@Test
+	void testGetCharAndShip() {
+		//given
+		
+		Ship s = new Ship();
+		s.setId("1234");
+		s.setName("Unit");
+		
+		Character c = new Character();
+		c.setId("1234");
+		c.setName("Unit");
+		
+		ApiClient spy = spy(apiClient);
+		doReturn(Lists.newArrayList(s)).when(spy).getShipList();
+		doReturn(Lists.newArrayList(c)).when(spy).getCharacterList();
+		
+		// when
+		
+		List<DescriptiveCharacter> charAndShipList = spy.getCharAndShipList();
+		
+		// then
+		
+		assertEquals(2, charAndShipList.size());
+	}
+	
 }

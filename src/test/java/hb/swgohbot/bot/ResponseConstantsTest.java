@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ResponseConstantsTest {
 	
 	@Test
-	void preFormatText() {
+	void testPreFormatText() {
 		assertEquals("<pre>test</pre>", ResponseConstants.preFormatText("test"));
 	}
 }

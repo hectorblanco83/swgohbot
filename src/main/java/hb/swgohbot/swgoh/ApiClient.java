@@ -5,7 +5,6 @@ import hb.swgohbot.swgoh.api.Character;
 import hb.swgohbot.swgoh.api.*;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -25,7 +24,6 @@ import java.util.Optional;
  */
 @Log4j
 @Service
-@CacheConfig(cacheNames = {"swgoh"})
 public class ApiClient {
 	
 	// LOG MSG
@@ -59,13 +57,12 @@ public class ApiClient {
 	}
 	
 	
-	@Cacheable
 	public Guild getMyGuild() {
 		return getGuild(myGuildId);
 	}
 	
 	
-	@Cacheable
+	@Cacheable("guild")
 	public Guild getGuild(String guildID) {
 		LOGGER.info("Refreshing Guild information");
 		HttpEntity<String> entity = getHeaderEntity();
@@ -77,7 +74,7 @@ public class ApiClient {
 	}
 	
 	
-	@Cacheable
+	@Cacheable("player")
 	public Player getPlayer(String allyCode) {
 		HttpEntity<String> entity = getHeaderEntity();
 		
@@ -97,13 +94,13 @@ public class ApiClient {
 	}
 	
 	
-	@Cacheable
+	@Cacheable("character")
 	public List<Character> getCharacterList() {
 		LOGGER.info("Refreshing Characters information");
 		HttpEntity<String> entity = getHeaderEntity();
 		
 		LOGGER.info(LOG_CALLING_SWGOH_GG);
-		ResponseEntity<List<Character>> response = restTemplate.exchange(apiUrl + "/characters/", HttpMethod.GET, entity, new ParameterizedTypeReference<List<Character>>() {}, new Object[]{});
+		ResponseEntity<List<Character>> response = restTemplate.exchange(apiUrl + "/characters/", HttpMethod.GET, entity, new ParameterizedTypeReference<List<Character>>() {});
 		LOGGER.info(LOG_SWGOH_GG_RESPONSE_RECEIVED);
 		
 		return response.getBody();
@@ -118,7 +115,7 @@ public class ApiClient {
 	}
 	
 	
-	@Cacheable
+	@Cacheable("ship")
 	public List<Ship> getShipList() {
 		LOGGER.info("Refreshing Ships information");
 		HttpEntity<String> entity = getHeaderEntity();
@@ -146,7 +143,7 @@ public class ApiClient {
 	}
 	
 	
-	@Cacheable
+	@Cacheable("gear")
 	public List<Gear> getGearList() {
 		LOGGER.info("Refreshing Gear information");
 		HttpEntity<String> entity = getHeaderEntity();
