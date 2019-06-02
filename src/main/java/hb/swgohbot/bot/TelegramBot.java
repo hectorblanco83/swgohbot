@@ -1,6 +1,7 @@
 package hb.swgohbot.bot;
 
 import hb.swgohbot.bot.actions.CharacterSearchAction;
+import hb.swgohbot.bot.actions.PlatoonSearchAction;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +29,7 @@ public class TelegramBot extends AbilityBot {
 	private String creatorId;
 	
 	// Reply sender that will handle almost all bot's interactions
-	private ReplySender replyer;
+	private ReplySender replier;
 	
 	
 	/**
@@ -37,7 +38,7 @@ public class TelegramBot extends AbilityBot {
 	@Autowired
 	public TelegramBot(@Value("${telegram.bot.token}") String botToken, @Value("${telegram.bot.username}") String botUsername) {
 		super(botToken, botUsername);
-		replyer = new ReplySender(sender);
+		replier = new ReplySender(sender);
 	}
 	
 	
@@ -50,7 +51,7 @@ public class TelegramBot extends AbilityBot {
 	void setSender(MessageSender newSender) {
 		this.sender = newSender;
 		this.silent = new SilentSender(sender);
-		this.replyer = new ReplySender(sender);
+		this.replier = new ReplySender(sender);
 	}
 	
 	
@@ -67,7 +68,19 @@ public class TelegramBot extends AbilityBot {
 				.info("Search for a character within the guild.")
 				.locality(ALL)
 				.privacy(PUBLIC)
-				.action(ctx -> new CharacterSearchAction().doAction(ctx, replyer))
+				.action(ctx -> new CharacterSearchAction().doAction(ctx, replier))
+				.build();
+	}
+	
+	
+	public Ability tbPlatoon() {
+		return Ability
+				.builder()
+				.name("tb")
+				.info("Search for characters for TB's platoons.")
+				.locality(ALL)
+				.privacy(PUBLIC)
+				.action(ctx -> new PlatoonSearchAction().doAction(ctx, replier))
 				.build();
 	}
 	

@@ -2,12 +2,14 @@ package hb.swgohbot.bot;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hb.swgohbot.repositories.CharacterRepository;
+import hb.swgohbot.repositories.PlayerRepository;
 import hb.swgohbot.repositories.ShipRepository;
 import hb.swgohbot.services.SearchService;
 import hb.swgohbot.setup.SpringContextProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -16,11 +18,12 @@ import org.telegram.abilitybots.api.objects.MessageContext;
 import org.telegram.abilitybots.api.sender.MessageSender;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,6 +45,9 @@ class TelegramBotTest {
 	private CharacterRepository characterRepository;
 	
 	@Mock
+	private PlayerRepository playerRepository;
+	
+	@Mock
 	SearchService searchService;
 	
 	
@@ -51,14 +57,14 @@ class TelegramBotTest {
 		sender = mock(MessageSender.class);
 		bot.setSender(sender);
 		
-		searchService = new SearchService(characterRepository, shipRepository);
+		searchService = new SearchService(characterRepository, shipRepository, playerRepository);
 		when(springContext.getBean(SearchService.class)).thenReturn(searchService);
 		new SpringContextProvider().setApplicationContext(springContext);
 	}
 	
 	
 	@Test
-	void testSearchCharacterAbility() throws Exception {
+	void testSearchCharacterAbility() throws IOException, TelegramApiException {
 		// given
 		
 		// we need messageId
@@ -66,7 +72,7 @@ class TelegramBotTest {
 		User endUser = new User(USER_ID, "John", false, "Doe", "jDoe1234", Locale.ENGLISH.getLanguage());
 		MessageContext context = MessageContext.newContext(update, endUser, CHAT_ID, "vader");
 		
-		when(sender.execute(any())).thenReturn(update.getMessage());
+		when(sender.execute(ArgumentMatchers.any())).thenReturn(update.getMessage());
 		when(characterRepository.findAll()).thenReturn(new ArrayList<>());
 		when(shipRepository.findAll()).thenReturn(new ArrayList<>());
 		
