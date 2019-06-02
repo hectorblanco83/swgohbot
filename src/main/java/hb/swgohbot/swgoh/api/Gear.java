@@ -1,6 +1,7 @@
 package hb.swgohbot.swgoh.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -52,15 +53,6 @@ public class Gear implements Serializable {
 	private List<GearIngredient> ingredients;
 	
 	
-	public Gear() {
-	}
-	
-	
-	public Gear(String id) {
-		this.id = id;
-	}
-	
-	
 	@Override
 	public boolean equals(Object o) {
 		if(this == o) return true;
@@ -80,4 +72,13 @@ public class Gear implements Serializable {
 	public String toString() {
 		return "Gear{ id='" + id + "', name=" + name + ", tier=" + tier + "}";
 	}
+	
+	
+	@Builder(builderMethodName = "builder")
+	public static Gear newGear(String id) {
+		Gear gear = new Gear();
+		gear.setId(id);
+		return gear;
+	}
+	
 }

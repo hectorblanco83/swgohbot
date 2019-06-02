@@ -1,12 +1,17 @@
 package hb.swgohbot.swgoh.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.Singular;
 import lombok.extern.log4j.Log4j;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -21,8 +26,10 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @Log4j
-public class Player implements Comparable {
+@Document(collection = "players")
+public class Player implements Comparable, Serializable {
 	
+	@Id
 	@JsonProperty("ally_code")
 	private Integer allyCode;
 	
@@ -30,7 +37,7 @@ public class Player implements Comparable {
 	private String name;
 	
 	@JsonProperty("galactic_power")
-	private Integer galaticPower;
+	private Integer galacticPower;
 	
 	@JsonProperty("url")
 	private String url;
@@ -47,7 +54,7 @@ public class Player implements Comparable {
 		setAllyCode((Integer) data.get("ally_code"));
 		setName((String) data.get("name"));
 		setUrl((String) data.get("url"));
-		setGalaticPower((Integer) data.get("galactic_power"));
+		setGalacticPower((Integer) data.get("galactic_power"));
 		try {
 			Date dataLastUpdated = new SimpleDateFormat("yyyy-MM-dd").parse((String) data.get("last_updated"));
 			setLastUpdated(dataLastUpdated.getTime());
@@ -111,6 +118,16 @@ public class Player implements Comparable {
 	@Override
 	public int hashCode() {
 		return Objects.hash(allyCode);
+	}
+	
+	
+	@Builder(builderMethodName = "builder")
+	public static Player newPlayer(int allyCode, String name, @Singular List<Unit> units) {
+		Player player = new Player();
+		player.setAllyCode(allyCode);
+		player.setName(name);
+		player.setUnits(units);
+		return player;
 	}
 	
 }

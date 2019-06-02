@@ -32,12 +32,12 @@ class GearLevelTest {
 	
 	
 	@Test
-	public void testParseData() throws Exception {
+	public void testParseData() {
 		// given swgoh's all gear list
 		ArrayList<Gear> allSwgohGears = new ArrayList<>();
-		allSwgohGears.add(new Gear("1"));
-		allSwgohGears.add(new Gear("2"));
-		allSwgohGears.add(new Gear("3"));
+		allSwgohGears.add(Gear.builder().id("1").build());
+		allSwgohGears.add(Gear.builder().id("2").build());
+		allSwgohGears.add(Gear.builder().id("3").build());
 		when(apiClient.getGearList()).thenReturn(allSwgohGears);
 		
 		// given those gears during GearLevel import

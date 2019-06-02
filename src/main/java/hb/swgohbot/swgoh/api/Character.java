@@ -49,4 +49,5 @@ public class Character extends DescriptiveCharacter {
 	public int hashCode() {
 		return Objects.hash(super.hashCode(), getPrimaryKey());
 	}
+	
 }

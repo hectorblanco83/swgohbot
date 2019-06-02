@@ -20,5 +20,4 @@ public class GearIngredient implements Serializable {
 	@JsonProperty("amount")
 	private int amount = 0;
 	
-	
 }

@@ -2,6 +2,7 @@ package hb.swgohbot.swgoh.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
@@ -99,6 +100,17 @@ public class Unit extends BaseCharacter {
 	@Override
 	public int hashCode() {
 		return Objects.hash(getId());
+	}
+	
+	
+	@Builder(builderMethodName = "builder")
+	public static Unit newUnit(String id, String name, int rarity, int type) {
+		Unit unit = new Unit();
+		unit.setId(id);
+		unit.setName(name);
+		unit.setRarity(rarity);
+		unit.setType(type);
+		return unit;
 	}
 	
 }
