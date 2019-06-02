@@ -16,7 +16,8 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GearLevelTest {
-
+	
+	
 	@Mock
 	ApiClient apiClient;
 	
@@ -32,7 +33,7 @@ class GearLevelTest {
 	
 	
 	@Test
-	public void testParseData() {
+	void testParseData() {
 		// given swgoh's all gear list
 		ArrayList<Gear> allSwgohGears = new ArrayList<>();
 		allSwgohGears.add(Gear.builder().id("1").build());
