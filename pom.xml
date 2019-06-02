@@ -5,7 +5,6 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-
 	<groupId>hb</groupId>
 	<artifactId>swgohbot</artifactId>
 	<version>1.0-SNAPSHOT</version>
@@ -198,31 +197,31 @@
 			<version>2.27.0</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>de.flapdoodle.embed</groupId>
+			<artifactId>de.flapdoodle.embed.mongo</artifactId>
+			<scope>test</scope>
+		</dependency>
 
 	</dependencies>
 
 
 	<build>
-
 		<plugins>
-
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.22.0</version>
 			</plugin>
-
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
 				<version>3.6.0.1398</version>
 			</plugin>
-
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -242,10 +241,7 @@
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
-
 	</build>
-
 
 </project>
