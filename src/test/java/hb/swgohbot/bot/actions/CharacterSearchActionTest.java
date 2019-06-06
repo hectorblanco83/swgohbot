@@ -3,10 +3,16 @@ package hb.swgohbot.bot.actions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import hb.swgohbot.bot.ReplySender;
+import hb.swgohbot.services.PlayerService;
 import hb.swgohbot.services.SearchService;
 import hb.swgohbot.setup.SpringContextProvider;
+import hb.swgohbot.swgoh.api.Character;
+import hb.swgohbot.swgoh.api.Player;
+import hb.swgohbot.swgoh.api.Ship;
+import hb.swgohbot.swgoh.api.Unit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -33,6 +39,8 @@ class CharacterSearchActionTest {
 	private static final int USER_ID = 123;
 	private static final int MSG_ID = 1234;
 	private static final long CHAT_ID = 12345L;
+	private static final String D_VADER = "Darth Vader";
+	private static final String VADER = "vader";
 	
 	@Mock
 	ApplicationContext springContext;
@@ -41,7 +49,20 @@ class CharacterSearchActionTest {
 	SearchService searchService;
 	
 	@Mock
+	PlayerService playerService;
+	
+	@Mock
 	ReplySender replier;
+	
+	
+	private MessageContext prepareMessageContext() throws java.io.IOException {
+		// we need messageId
+		Update update = new ObjectMapper().readValue("{\"message\": {\"message_id\":\"" + MSG_ID + "\"}}", Update.class);
+		User endUser = new User(USER_ID, "John", false, "Doe", "jDoe1234", Locale.ENGLISH.getLanguage());
+		MessageContext context = MessageContext.newContext(update, endUser, CHAT_ID, VADER);
+		when(replier.reply(anyString(), eq(CHAT_ID), eq(MSG_ID))).thenReturn(Optional.of(new Message()));
+		return context;
+	}
 	
 	
 	@BeforeEach
@@ -52,18 +73,107 @@ class CharacterSearchActionTest {
 	
 	
 	@Test
-	void testCharnameNotFound() throws Exception {
+	void testCharNameNotFound() throws Exception {
+		String expectedMsg = "<pre>It appears that there's no character with name vader</pre>";
+
+		// given
+		MessageContext context = prepareMessageContext();
+		when(searchService.suggestCharacterFromQuery(eq(VADER))).thenReturn(Lists.newArrayList());
+		
+		// when
+		new CharacterSearchAction().doAction(context, replier);
+		
+		// then
+		ArgumentCaptor<EditMessageText> argument = ArgumentCaptor.forClass(EditMessageText.class);
+		verify(replier, times(1)).execute(argument.capture());
+		Assertions.assertEquals(expectedMsg, argument.getValue().getText());
+	}
+	
+	
+	@Test
+	@DisplayName("Test suggest characters when search find multiple possibilities")
+	void testFoundMultipleCharacters() throws Exception {
+		String expectedMsg = "<pre>There's more than one character with name vader\n" +
+				"Here are some possibilities:\n" +
+				"\n" +
+				"Darth Vader\n" +
+				"Darth Vader 2</pre>";
 		
 		// given
 		// we need messageId
-		Update update = new ObjectMapper().readValue("{\"message\": {\"message_id\":\""+MSG_ID+"\"}}", Update.class);
-		User endUser = new User(USER_ID, "John", false, "Doe", "jDoe1234", Locale.ENGLISH.getLanguage());
-		MessageContext context = MessageContext.newContext(update, endUser, CHAT_ID, "vader");
-		String expectedMsg = "<pre>It appears that there's no character with name vader</pre>";
+		MessageContext context = prepareMessageContext();
+		Character vader1 = Character.builder().id("1").name(D_VADER).build();
+		Character vader2 = Character.builder().id("2").name("Darth Vader 2").build();
+		when(searchService.suggestCharacterFromQuery(eq(VADER))).thenReturn(Lists.newArrayList(vader1, vader2));
 		
-		when(searchService.suggestCharacterFromQuery(eq("vader"))).thenReturn(Lists.newArrayList());
-		when(replier.reply(anyString(), eq(CHAT_ID), eq(MSG_ID))).thenReturn(Optional.of(new Message()));
+		// when
+		new CharacterSearchAction().doAction(context, replier);
+		
+		// then
+		ArgumentCaptor<EditMessageText> argument = ArgumentCaptor.forClass(EditMessageText.class);
+		verify(replier, times(1)).execute(argument.capture());
+		Assertions.assertEquals(expectedMsg, argument.getValue().getText());
+	}
 	
+	
+	@Test
+	@DisplayName("Test action when it find the exact character")
+	void testFoundCharacter() throws Exception {
+		String expectedMsg =
+				"<pre>Darth Vader" +
+				"\n" +
+				"\n" +
+				"| -- | --- | player 3\n" +
+				"| 7* | G12 | player 1\n" +
+				"| 6* | G10 | player 2\n" +
+				"</pre>";
+		
+		// given
+		MessageContext context = prepareMessageContext();
+		
+		Character vader = Character.builder().id("1").name(D_VADER).build();
+		when(searchService.suggestCharacterFromQuery(eq(VADER))).thenReturn(Lists.newArrayList(vader));
+		
+		when(springContext.getBean(PlayerService.class)).thenReturn(playerService);
+		when(playerService.findAllWithUnit(eq("1"))).thenReturn(Lists.newArrayList(
+				Player.builder().name("player 1").unit(Unit.builder().id("1").name(D_VADER).rarity(7).gear(12).build()).build(),
+				Player.builder().name("player 2").unit(Unit.builder().id("1").name(D_VADER).rarity(6).gear(10).build()).build(),
+				Player.builder().name("player 3").build()
+		));
+		
+		// when
+		new CharacterSearchAction().doAction(context, replier);
+		
+		// then
+		ArgumentCaptor<EditMessageText> argument = ArgumentCaptor.forClass(EditMessageText.class);
+		verify(replier, times(1)).execute(argument.capture());
+		Assertions.assertEquals(expectedMsg, argument.getValue().getText());
+	}
+	
+	
+	@Test
+	@DisplayName("Test action when it find the exact ship")
+	void testFoundShip() throws Exception {
+		String expectedMsg =
+				"<pre>Darth Vader" +
+				"\n" +
+				"\n" +
+				"| -- | player 2\n" +
+				"| 7* | player 1\n" +
+				"</pre>";
+		
+		// given
+		MessageContext context = prepareMessageContext();
+		
+		Ship vader = Ship.builder().id("1").name(D_VADER).build();
+		when(searchService.suggestCharacterFromQuery(eq(VADER))).thenReturn(Lists.newArrayList(vader));
+		
+		when(springContext.getBean(PlayerService.class)).thenReturn(playerService);
+		when(playerService.findAllWithUnit(eq("1"))).thenReturn(Lists.newArrayList(
+				Player.builder().name("player 1").unit(Unit.builder().id("1").name(D_VADER).rarity(7).type(2).build()).build(),
+				Player.builder().name("player 2").build()
+		));
+		
 		// when
 		new CharacterSearchAction().doAction(context, replier);
 		

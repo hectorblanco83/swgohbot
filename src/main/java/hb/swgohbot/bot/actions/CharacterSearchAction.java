@@ -85,7 +85,7 @@ public class CharacterSearchAction implements BotReplyerAction {
 				} else {
 					Unit playerUnit = playerUnits.get(0);
 					text.append("| ").append(playerUnit.getRarity()).append("*");
-					if(playerUnit.getType() == 1) {
+					if(character.getType() == 1) {
 						text.append(" | G").append(StringUtils.rightPad(String.valueOf(playerUnit.getGearLevel()), 2));
 					}
 					text.append(" | ").append(player.getName()).append("\n");

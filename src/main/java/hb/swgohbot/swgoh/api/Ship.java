@@ -1,6 +1,7 @@
 package hb.swgohbot.swgoh.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -22,6 +23,11 @@ public class Ship extends DescriptiveCharacter {
 	private Boolean capitalShip;
 	
 	
+	public Ship() {
+		setType(2);
+	}
+	
+	
 	@Override
 	public boolean equals(Object o) {
 		if(this == o) return true;
@@ -34,6 +40,16 @@ public class Ship extends DescriptiveCharacter {
 	@Override
 	public int hashCode() {
 		return Objects.hash(getId());
+	}
+	
+	
+	
+	@Builder(builderMethodName = "builder")
+	public static Ship newShip(String id, String name) {
+		Ship ship = new Ship();
+		ship.setId(id);
+		ship.setName(name);
+		return ship;
 	}
 	
 }

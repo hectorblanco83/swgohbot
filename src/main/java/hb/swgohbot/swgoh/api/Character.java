@@ -1,6 +1,7 @@
 package hb.swgohbot.swgoh.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -35,6 +36,11 @@ public class Character extends DescriptiveCharacter {
 	private Integer shardsToActivate;
 	
 	
+	public Character() {
+		setType(1);
+	}
+	
+	
 	@Override
 	public boolean equals(Object o) {
 		if(this == o) return true;
@@ -48,6 +54,16 @@ public class Character extends DescriptiveCharacter {
 	@Override
 	public int hashCode() {
 		return Objects.hash(super.hashCode(), getPrimaryKey());
+	}
+	
+	
+	@Builder(builderMethodName = "builder")
+	public static Character newCharacter(String id, String name) {
+		Character character = new Character();
+		character.setId(id);
+		character.setName(name);
+		character.setType(1);
+		return character;
 	}
 	
 }

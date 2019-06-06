@@ -104,11 +104,12 @@ public class Unit extends BaseCharacter {
 	
 	
 	@Builder(builderMethodName = "builder")
-	public static Unit newUnit(String id, String name, int rarity, int type) {
+	public static Unit newUnit(String id, String name, int rarity, int gear, int type) {
 		Unit unit = new Unit();
 		unit.setId(id);
 		unit.setName(name);
 		unit.setRarity(rarity);
+		unit.setGearLevel(gear);
 		unit.setType(type);
 		return unit;
 	}
