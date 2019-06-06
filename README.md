@@ -4,7 +4,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=hectorblanco83_swgohbot&metric=alert_status)](https://sonarcloud.io/dashboard?id=hectorblanco83_swgohbot)
 
 
-SwGohBot it's a Telegram bot to help gild leaders and officer to manage their gild, with useful commands
+SwGohBot it's a Telegram bot to help gild leaders and officers to manage their gild, with useful commands
 
 This bot use the API from swgoh.gg (https://swgoh.gg/api/) to retrieve gild's information
 
