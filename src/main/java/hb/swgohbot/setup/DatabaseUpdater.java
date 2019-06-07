@@ -1,9 +1,11 @@
 package hb.swgohbot.setup;
 
 import hb.swgohbot.repositories.mongo.CharacterRepositoryMongo;
+import hb.swgohbot.repositories.mongo.PlayerRepositoryMongo;
 import hb.swgohbot.repositories.mongo.ShipRepositoryMongo;
 import hb.swgohbot.swgoh.ApiClient;
 import hb.swgohbot.swgoh.api.Character;
+import hb.swgohbot.swgoh.api.Guild;
 import hb.swgohbot.swgoh.api.Ship;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,8 @@ public class DatabaseUpdater {
 	private CharacterRepositoryMongo charRepo;
 	@Autowired
 	private ShipRepositoryMongo shipRepo;
+	@Autowired
+	private PlayerRepositoryMongo playerRepo;
 	
 	
 	/**
@@ -62,6 +66,21 @@ public class DatabaseUpdater {
 		
 		shipRepo.saveAll(shipList);
 		LOGGER.info("Database's ships list saved!");
+	}
+	
+	
+	/**
+	 * 2 minutes after initialization, will update {@link Ship} list on db, and repeat itself after 24h
+	 */
+	@Scheduled(fixedRateString = "PT4H", initialDelayString = "PT5M")
+	public void updatePlayers() {
+		LOGGER.info("Updating database's ships list...");
+		
+		Guild guild = apiClient.getMyGuild();
+		LOGGER.debug("Received " + guild.getName() + " guild");
+		
+		playerRepo.saveAll(guild.getPlayers());
+		LOGGER.info("Database's players list saved!");
 	}
 	
 }
