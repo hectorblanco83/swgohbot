@@ -59,6 +59,7 @@ class TelegramBotTest {
 		
 		searchService = new SearchService(characterRepository, shipRepository, playerRepository);
 		when(springContext.getBean(SearchService.class)).thenReturn(searchService);
+		when(springContext.getBean(TelegramBot.class)).thenReturn(bot);
 		new SpringContextProvider().setApplicationContext(springContext);
 	}
 	

@@ -7,10 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.bot.AbilityBot;
+import org.telegram.abilitybots.api.db.DBContext;
 import org.telegram.abilitybots.api.objects.Ability;
 import org.telegram.abilitybots.api.sender.MessageSender;
 import org.telegram.abilitybots.api.sender.SilentSender;
 
+import static org.telegram.abilitybots.api.db.MapDBContext.offlineInstance;
 import static org.telegram.abilitybots.api.objects.Locality.ALL;
 import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 
@@ -37,7 +39,12 @@ public class TelegramBot extends AbilityBot {
 	 */
 	@Autowired
 	public TelegramBot(@Value("${telegram.bot.token}") String botToken, @Value("${telegram.bot.username}") String botUsername) {
-		super(botToken, botUsername);
+		this(botToken, botUsername, offlineInstance(botUsername));
+	}
+	
+	
+	public TelegramBot(String botToken, String botUsername, DBContext db) {
+		super(botToken, botUsername, db);
 		replier = new ReplySender(sender);
 	}
 	
@@ -48,10 +55,15 @@ public class TelegramBot extends AbilityBot {
 	}
 	
 	
-	void setSender(MessageSender newSender) {
+	public void setSender(MessageSender newSender) {
 		this.sender = newSender;
 		this.silent = new SilentSender(sender);
 		this.replier = new ReplySender(sender);
+	}
+	
+	
+	public ReplySender replier() {
+		return replier;
 	}
 	
 	
@@ -68,7 +80,7 @@ public class TelegramBot extends AbilityBot {
 				.info("Search for a character within the guild.")
 				.locality(ALL)
 				.privacy(PUBLIC)
-				.action(ctx -> new CharacterSearchAction().doAction(ctx, replier))
+				.action(new CharacterSearchAction())
 				.build();
 	}
 	
@@ -80,7 +92,7 @@ public class TelegramBot extends AbilityBot {
 				.info("Search for characters for TB's platoons.")
 				.locality(ALL)
 				.privacy(PUBLIC)
-				.action(ctx -> new PlatoonSearchAction().doAction(ctx, replier))
+				.action(new PlatoonSearchAction())
 				.build();
 	}
 	

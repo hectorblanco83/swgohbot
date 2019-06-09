@@ -1,7 +1,8 @@
 package hb.swgohbot.bot.actions;
 
 import hb.swgohbot.bot.ReplySender;
-import hb.swgohbot.bot.ResponseConstants;
+import hb.swgohbot.bot.ResponseUtils;
+import hb.swgohbot.bot.TelegramBot;
 import hb.swgohbot.services.SearchService;
 import hb.swgohbot.setup.SpringContextProvider;
 import hb.swgohbot.swgoh.api.BaseCharacter;
@@ -19,16 +20,20 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
+
+import static hb.swgohbot.bot.ResponseUtils.getWaitMessage;
 
 
 @Log4j
-public class PlatoonSearchAction implements BotReplyerAction {
+public class PlatoonSearchAction implements Consumer<MessageContext> {
 	
 	
 	@Override
-	public void doAction(MessageContext context, ReplySender replier) {
+	public void accept(MessageContext context) {
+		TelegramBot bot = SpringContextProvider.getContext().getBean(TelegramBot.class);
 		Message updateMsg = context.update().getMessage();
-		Optional<Message> optionalMsg = replier.reply(getWaitMessage(), context.chatId(), updateMsg.getMessageId());
+		Optional<Message> optionalMsg = bot.replier().reply(getWaitMessage(), context.chatId(), updateMsg.getMessageId());
 		if(optionalMsg.isPresent()) {
 			Message waitMsg = optionalMsg.get();
 			
@@ -53,13 +58,13 @@ public class PlatoonSearchAction implements BotReplyerAction {
 			List<BaseCharacter> charFounded = service.suggestCharacterFromQuery(charQuery);
 			if(charFounded.isEmpty()) {
 				String text = "It appears that there's no character with name " + StringUtils.join(charQuery, " ");
-				editedMessage.setText(ResponseConstants.preFormatText(text));
-				replier.execute(editedMessage);
+				editedMessage.setText(ResponseUtils.preFormatText(text));
+				bot.replier().execute(editedMessage);
 				return;
 			}
 			
 			// run query in another thread
-			getSearcher(replier, editedMessage, charFounded, charQuery, rarityQuery).run();
+			getSearcher(bot.replier(), editedMessage, charFounded, charQuery, rarityQuery).run();
 		}
 	}
 	
@@ -73,7 +78,7 @@ public class PlatoonSearchAction implements BotReplyerAction {
 			Map<String, List<Player>> queryResults = searchService.findPlayersWithChar(charFounded, rarityQuery);
 			if(queryResults.isEmpty()) {
 				String response = "No player has character " + StringUtils.join(charQuery, " ") + " at " + rarityQuery + "*";
-				editedMessage.setText(ResponseConstants.preFormatText(response));
+				editedMessage.setText(ResponseUtils.preFormatText(response));
 			} else {
 				// 30 chars per row
 				StringBuilder sb = new StringBuilder();
@@ -90,10 +95,9 @@ public class PlatoonSearchAction implements BotReplyerAction {
 					// 2 chars
 					sb.append(rarityQuery).append("* ").append(charName).append("\n");
 				});
-				editedMessage.setText(ResponseConstants.preFormatText(sb.toString()));
+				editedMessage.setText(ResponseUtils.preFormatText(sb.toString()));
 			}
 			replier.execute(editedMessage);
 		};
 	}
-	
 }

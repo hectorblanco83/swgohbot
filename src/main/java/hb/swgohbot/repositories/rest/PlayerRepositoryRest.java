@@ -4,6 +4,7 @@ import hb.swgohbot.repositories.PlayerRepository;
 import hb.swgohbot.swgoh.ApiClient;
 import hb.swgohbot.swgoh.api.Guild;
 import hb.swgohbot.swgoh.api.Player;
+import hb.swgohbot.swgoh.api.Unit;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -40,8 +41,9 @@ public class PlayerRepositoryRest implements PlayerRepository {
 		Iterator<Player> playerIterator = players.iterator();
 		while(playerIterator.hasNext()) {
 			Player player = playerIterator.next();
-			player.getCharacters().removeIf(unit -> !(ArrayUtils.contains(unitsId, unit.getId()) && unit.getRarity().equals(rarity)));
-			if(player.getCharacters().isEmpty()) {
+			List<Unit> playerCharacters = player.getCharacters();
+			playerCharacters.removeIf(unit -> !(ArrayUtils.contains(unitsId, unit.getId()) && unit.getRarity().equals(rarity)));
+			if(playerCharacters.isEmpty()) {
 				playerIterator.remove();
 			}
 		}

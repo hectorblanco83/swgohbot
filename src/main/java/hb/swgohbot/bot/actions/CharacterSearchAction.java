@@ -1,7 +1,8 @@
 package hb.swgohbot.bot.actions;
 
 import hb.swgohbot.bot.ReplySender;
-import hb.swgohbot.bot.ResponseConstants;
+import hb.swgohbot.bot.ResponseUtils;
+import hb.swgohbot.bot.TelegramBot;
 import hb.swgohbot.services.PlayerService;
 import hb.swgohbot.services.SearchService;
 import hb.swgohbot.setup.SpringContextProvider;
@@ -21,17 +22,21 @@ import javax.annotation.Nonnull;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import static hb.swgohbot.bot.ResponseUtils.getWaitMessage;
 
 
 @Log4j
-public class CharacterSearchAction implements BotReplyerAction {
+public class CharacterSearchAction implements Consumer<MessageContext> {
 	
 	
 	@Override
-	public void doAction(MessageContext context, ReplySender replyer) {
+	public void accept(MessageContext context) {
+		TelegramBot bot = SpringContextProvider.getContext().getBean(TelegramBot.class);
 		Message updateMsg = context.update().getMessage();
-		Optional<Message> optionalMsg = replyer.reply(getWaitMessage(), context.chatId(), updateMsg.getMessageId());
+		Optional<Message> optionalMsg = bot.replier().reply(getWaitMessage(), context.chatId(), updateMsg.getMessageId());
 		if(optionalMsg.isPresent()) {
 			Message waitMsg = optionalMsg.get();
 			
@@ -44,21 +49,22 @@ public class CharacterSearchAction implements BotReplyerAction {
 			List<BaseCharacter> charFounded = service.suggestCharacterFromQuery(context.arguments());
 			if(charFounded.isEmpty()) {
 				String text = "It appears that there's no character with name " + StringUtils.join(context.arguments(), " ");
-				editedMessage.setText(ResponseConstants.preFormatText(text));
-				replyer.execute(editedMessage);
+				editedMessage.setText(ResponseUtils.preFormatText(text));
+				bot.replier().execute(editedMessage);
 				return;
 			} else if(charFounded.size() > 1) {
 				String text = "There's more than one character with name " + StringUtils.join(context.arguments(), " ") + "\n";
 				text += "Here are some possibilities:\n\n";
 				text += charFounded.stream().map(BaseCharacter::getName).collect(Collectors.joining("\n"));
-				editedMessage.setText(ResponseConstants.preFormatText(text));
-				replyer.execute(editedMessage);
+				editedMessage.setText(ResponseUtils.preFormatText(text));
+				bot.replier().execute(editedMessage);
 				return;
 			}
 			
 			// run query in another thread
-			getSearcher(replyer, editedMessage, charFounded.get(0)).run();
+			getSearcher(bot.replier(), editedMessage, charFounded.get(0)).run();
 		}
+		
 	}
 	
 	
@@ -92,7 +98,7 @@ public class CharacterSearchAction implements BotReplyerAction {
 				}
 			}
 			
-			editedMessage.setText(ResponseConstants.preFormatText(text.toString()));
+			editedMessage.setText(ResponseUtils.preFormatText(text.toString()));
 			editedMessage.setParseMode(ParseMode.HTML);
 			replyer.execute(editedMessage);
 		};
@@ -125,5 +131,4 @@ public class CharacterSearchAction implements BotReplyerAction {
 			return o1.getName().compareTo(o2.getName());
 		};
 	}
-	
 }

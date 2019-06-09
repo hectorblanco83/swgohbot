@@ -3,6 +3,7 @@ package hb.swgohbot.bot.actions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import hb.swgohbot.bot.ReplySender;
+import hb.swgohbot.bot.TelegramBot;
 import hb.swgohbot.services.PlayerService;
 import hb.swgohbot.services.SearchService;
 import hb.swgohbot.setup.SpringContextProvider;
@@ -15,10 +16,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapdb.DBMaker;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
+import org.telegram.abilitybots.api.db.MapDBContext;
 import org.telegram.abilitybots.api.objects.MessageContext;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -43,46 +46,51 @@ class CharacterSearchActionTest {
 	private static final String VADER = "vader";
 	
 	@Mock
+	ReplySender replier;
+
+	@Mock
 	ApplicationContext springContext;
 	
 	@Mock
 	SearchService searchService;
-	
+
 	@Mock
 	PlayerService playerService;
-	
-	@Mock
-	ReplySender replier;
+
 	
 	
 	private MessageContext prepareMessageContext() throws java.io.IOException {
 		// we need messageId
 		Update update = new ObjectMapper().readValue("{\"message\": {\"message_id\":\"" + MSG_ID + "\"}}", Update.class);
 		User endUser = new User(USER_ID, "John", false, "Doe", "jDoe1234", Locale.ENGLISH.getLanguage());
-		MessageContext context = MessageContext.newContext(update, endUser, CHAT_ID, VADER);
-		when(replier.reply(anyString(), eq(CHAT_ID), eq(MSG_ID))).thenReturn(Optional.of(new Message()));
-		return context;
+		return MessageContext.newContext(update, endUser, CHAT_ID, VADER);
 	}
 	
 	
 	@BeforeEach
 	void setUp() {
+		TelegramBot bot = spy(new TelegramBot("1", "1", new MapDBContext(DBMaker.memoryDB().make())));
+		when(springContext.getBean(TelegramBot.class)).thenReturn(bot);
+		when(bot.replier()).thenReturn(replier);
+		when(replier.reply(anyString(), eq(CHAT_ID), eq(MSG_ID))).thenReturn(Optional.of(new Message()));
+		
 		when(springContext.getBean(SearchService.class)).thenReturn(searchService);
 		new SpringContextProvider().setApplicationContext(springContext);
 	}
 	
 	
 	@Test
+	@DisplayName("Test action when search characters found nothing")
 	void testCharNameNotFound() throws Exception {
 		String expectedMsg = "<pre>It appears that there's no character with name vader</pre>";
 
 		// given
 		MessageContext context = prepareMessageContext();
 		when(searchService.suggestCharacterFromQuery(eq(VADER))).thenReturn(Lists.newArrayList());
-		
+
 		// when
-		new CharacterSearchAction().doAction(context, replier);
-		
+		new CharacterSearchAction().accept(context);
+
 		// then
 		ArgumentCaptor<EditMessageText> argument = ArgumentCaptor.forClass(EditMessageText.class);
 		verify(replier, times(1)).execute(argument.capture());
@@ -107,7 +115,7 @@ class CharacterSearchActionTest {
 		when(searchService.suggestCharacterFromQuery(eq(VADER))).thenReturn(Lists.newArrayList(vader1, vader2));
 		
 		// when
-		new CharacterSearchAction().doAction(context, replier);
+		new CharacterSearchAction().accept(context);
 		
 		// then
 		ArgumentCaptor<EditMessageText> argument = ArgumentCaptor.forClass(EditMessageText.class);
@@ -142,7 +150,7 @@ class CharacterSearchActionTest {
 		));
 		
 		// when
-		new CharacterSearchAction().doAction(context, replier);
+		new CharacterSearchAction().accept(context);
 		
 		// then
 		ArgumentCaptor<EditMessageText> argument = ArgumentCaptor.forClass(EditMessageText.class);
@@ -175,7 +183,7 @@ class CharacterSearchActionTest {
 		));
 		
 		// when
-		new CharacterSearchAction().doAction(context, replier);
+		new CharacterSearchAction().accept(context);
 		
 		// then
 		ArgumentCaptor<EditMessageText> argument = ArgumentCaptor.forClass(EditMessageText.class);
