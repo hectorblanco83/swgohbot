@@ -20,14 +20,14 @@ import java.util.List;
 public interface PlayerRepositoryMongo extends MongoRepository<Player, String>, PlayerRepository {
 	
 	
-	@Query(value = "{ " +
-			"units: { " +
-			"$elemMatch: { " +
-			"_id:    { $in : ?1 }, " +
-			"rarity: { $gte: ?0 }" +
-			"}" +
-			"}" +
-			"}",
+	@Query(value = 	"{ " +
+						"units: { " +
+							"$elemMatch: { " +
+								"_id:    { $in : ?1 }, " +
+								"rarity: { $gte: ?0 }" +
+							"}" +
+						"}" +
+					"}",
 			fields = "{name: 1, last_updated: 1, 'units.$': 1}"
 	)
 	@Override

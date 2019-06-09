@@ -6,9 +6,9 @@ import hb.swgohbot.repositories.mongo.ShipRepositoryMongo;
 import hb.swgohbot.swgoh.ApiClient;
 import hb.swgohbot.swgoh.api.Character;
 import hb.swgohbot.swgoh.api.Guild;
+import hb.swgohbot.swgoh.api.Player;
 import hb.swgohbot.swgoh.api.Ship;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -22,21 +22,24 @@ import java.util.List;
  *
  * @author Hector Blanco
  */
-@SuppressWarnings("SpringJavaAutowiredFieldsWarningInspection")
 @Component
 @Profile("offline")
 @Log4j
 public class DatabaseUpdater {
 	
-	// field injection to prevent super massive param list on constructor
-	@Autowired
-	private ApiClient apiClient;
-	@Autowired
-	private CharacterRepositoryMongo charRepo;
-	@Autowired
-	private ShipRepositoryMongo shipRepo;
-	@Autowired
-	private PlayerRepositoryMongo playerRepo;
+	// fields
+	private final ApiClient apiClient;
+	private final CharacterRepositoryMongo charRepo;
+	private final ShipRepositoryMongo shipRepo;
+	private final PlayerRepositoryMongo playerRepo;
+	
+	
+	public DatabaseUpdater(ApiClient apiClient, CharacterRepositoryMongo charRepo, ShipRepositoryMongo shipRepo, PlayerRepositoryMongo playerRepo) {
+		this.apiClient = apiClient;
+		this.charRepo = charRepo;
+		this.shipRepo = shipRepo;
+		this.playerRepo = playerRepo;
+	}
 	
 	
 	/**
@@ -47,7 +50,7 @@ public class DatabaseUpdater {
 		LOGGER.info("Updating database's characters list...");
 		
 		List<Character> characterList = apiClient.getCharacterList();
-		LOGGER.debug("Received " + characterList.size() + " characters");
+		LOGGER.debug("Received characters: " + characterList.size());
 		
 		charRepo.saveAll(characterList);
 		LOGGER.info("Database's character list saved!");
@@ -62,7 +65,7 @@ public class DatabaseUpdater {
 		LOGGER.info("Updating database's ships list...");
 		
 		List<Ship> shipList = apiClient.getShipList();
-		LOGGER.debug("Received " + shipList.size() + " ships");
+		LOGGER.debug("Received ships: " + shipList.size());
 		
 		shipRepo.saveAll(shipList);
 		LOGGER.info("Database's ships list saved!");
@@ -70,16 +73,17 @@ public class DatabaseUpdater {
 	
 	
 	/**
-	 * 2 minutes after initialization, will update {@link Ship} list on db, and repeat itself after 24h
+	 * 2 minutes after initialization, will update {@link Player} list on db, and repeat itself after 24h
 	 */
 	@Scheduled(fixedRateString = "PT4H", initialDelayString = "PT5M")
 	public void updatePlayers() {
 		LOGGER.info("Updating database's ships list...");
 		
 		Guild guild = apiClient.getMyGuild();
-		LOGGER.debug("Received " + guild.getName() + " guild");
+		List<Player> players = guild.getPlayers();
+		LOGGER.debug("Received " + guild.getName() + " guild with " + players.size() + " players");
 		
-		playerRepo.saveAll(guild.getPlayers());
+		playerRepo.saveAll(players);
 		LOGGER.info("Database's players list saved!");
 	}
 	
