@@ -31,7 +31,7 @@ class PlayerTest {
 		data.put("name", "player 1");
 		data.put("url", "1234.com");
 		data.put("galactic_power", 10000);
-		data.put("last_updated", "2019-01-01");
+		data.put("last_updated", 0);
 		
 		// when
 		Player player = new Player();
@@ -40,7 +40,9 @@ class PlayerTest {
 		// then
 		assertEquals(Integer.valueOf(1234), player.getAllyCode());
 		assertEquals("player 1", player.getName());
-		assertEquals(new SimpleDateFormat("dd/MM/yyyy").parse("01/01/2019"), player.getLastUpdated());
+		
+		// date from swgoh is UTC
+		assertEquals(new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").parse("01/01/1970 01:00:00"), player.getLastUpdated());
 	}
 	
 	
