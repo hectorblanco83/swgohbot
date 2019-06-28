@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +42,7 @@ class PlayerTest {
 		assertEquals("player 1", player.getName());
 		
 		// date from swgoh is UTC
-		assertEquals(new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").parse("01/01/1970 01:00:00"), player.getLastUpdated());
+		assertEquals(Instant.ofEpochMilli(0).toEpochMilli(), player.getLastUpdated().getTime());
 	}
 	
 	
