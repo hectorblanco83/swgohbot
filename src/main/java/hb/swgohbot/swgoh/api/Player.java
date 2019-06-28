@@ -12,8 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serializable;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,12 +54,11 @@ public class Player implements Comparable, Serializable {
 		setName((String) data.get("name"));
 		setUrl((String) data.get("url"));
 		setGalacticPower((Integer) data.get("galactic_power"));
-		try {
-			Date dataLastUpdated = new SimpleDateFormat("yyyy-MM-dd").parse((String) data.get("last_updated"));
-			setLastUpdated(dataLastUpdated.getTime());
-		} catch(ParseException e) {
-			LOGGER.error("Error parsing player's last update " + data.get("last_updated"), e);
-		}
+		
+		Integer lastUpdated = (Integer) data.get("last_updated");
+		Instant instant = Instant.ofEpochMilli(lastUpdated.longValue() * 1000);
+		setLastUpdated(instant.toEpochMilli());
+		
 		LOGGER.debug("Finished parsing " + getName());
 	}
 	
