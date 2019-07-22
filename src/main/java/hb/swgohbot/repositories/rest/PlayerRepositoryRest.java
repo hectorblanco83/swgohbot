@@ -9,6 +9,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 
 import java.util.Iterator;
 import java.util.List;
@@ -35,7 +36,7 @@ public class PlayerRepositoryRest implements PlayerRepository {
 	
 	
 	@Override
-	public List<Player> findAllWithUnitsAndRarity(int rarity, String... unitsId) {
+	public Flux<Player> findAllWithUnitsAndRarity(int rarity, String... unitsId) {
 		Guild guild = apiClient.getMyGuild();
 		List<Player> players = guild.getPlayers();
 		Iterator<Player> playerIterator = players.iterator();
@@ -47,7 +48,7 @@ public class PlayerRepositoryRest implements PlayerRepository {
 				playerIterator.remove();
 			}
 		}
-		return players;
+		return Flux.fromIterable(players);
 	}
 	
 }

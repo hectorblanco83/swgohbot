@@ -19,9 +19,9 @@ import org.telegram.abilitybots.api.sender.MessageSender;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import reactor.core.publisher.Flux;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Locale;
 
 import static org.mockito.Mockito.*;
@@ -74,8 +74,8 @@ class TelegramBotTest {
 		MessageContext context = MessageContext.newContext(update, endUser, CHAT_ID, "vader");
 		
 		when(sender.execute(ArgumentMatchers.any())).thenReturn(update.getMessage());
-		//when(characterRepository.findAll()).thenReturn(new ArrayList<>());
-		when(shipRepository.findAll()).thenReturn(new ArrayList<>());
+		when(characterRepository.findAll()).thenReturn(Flux.empty());
+		when(shipRepository.findAll()).thenReturn(Flux.empty());
 		
 		// when
 		bot.searchCharacter().action().accept(context);

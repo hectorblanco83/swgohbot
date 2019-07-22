@@ -42,8 +42,8 @@ public class SearchService {
 	
 	public List<BaseCharacter> suggestCharacterFromQuery(String... query) {
 		List<BaseCharacter> allChars = new ArrayList<>();
-//		allChars.addAll(characterRepository.findAll().);
-		allChars.addAll(shipRepository.findAll());
+		allChars.addAll(characterRepository.findAll().collectList().block());
+		allChars.addAll(shipRepository.findAll().collectList().block());
 		
 		// Search by name equals
 		String joinedQuery = StringUtils.join(query, " ");
@@ -70,7 +70,7 @@ public class SearchService {
 	
 	public Map<String, List<Player>> findPlayersWithChar(List<BaseCharacter> chars, Integer queryRarity) {
 		HashMap<String, List<Player>> founded = new HashMap<>();
-		chars.forEach(bChar -> founded.put(bChar.getName(), playerRepository.findAllWithUnitsAndRarity(queryRarity, bChar.getId())));
+		chars.forEach(bChar -> founded.put(bChar.getName(), playerRepository.findAllWithUnitsAndRarity(queryRarity, bChar.getId()).collectList().block()));
 		return founded;
 	}
 	

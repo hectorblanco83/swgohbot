@@ -2,6 +2,7 @@ package hb.swgohbot.repositories;
 
 import hb.swgohbot.swgoh.api.Player;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 
@@ -14,5 +15,5 @@ import java.util.List;
 @Component
 public interface PlayerRepository {
 	
-	List<Player> findAllWithUnitsAndRarity(int rarity, String... unitsId);
+	Flux<Player> findAllWithUnitsAndRarity(int rarity, String... unitsId);
 }

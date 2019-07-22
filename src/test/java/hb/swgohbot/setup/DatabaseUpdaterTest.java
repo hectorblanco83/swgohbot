@@ -72,7 +72,7 @@ class DatabaseUpdaterTest {
 		dbUpdater.updateShips();
 		
 		// then
-		assertEquals(1, shipRepo.findAll().size());
+		assertEquals(1, shipRepo.findAll().collectList().block().size());
 	}
 	
 	
@@ -87,7 +87,7 @@ class DatabaseUpdaterTest {
 		dbUpdater.updatePlayers();
 		
 		// then
-		assertEquals(1, playerRepo.findAll().size());
+		assertEquals(1, playerRepo.findAll().collectList().block().size());
 	}
 
 }

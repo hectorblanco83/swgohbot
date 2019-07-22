@@ -51,7 +51,7 @@ class PlayerRepositoryRestTest {
 		when(apiClient.getMyGuild()).thenReturn(guild);
 		
 		// when
-		List<Player> players = playerRepo.findAllWithUnitsAndRarity(7, "1");
+		List<Player> players = playerRepo.findAllWithUnitsAndRarity(7, "1").collectList().block();
 		
 		// then
 		assertEquals(2, players.size());

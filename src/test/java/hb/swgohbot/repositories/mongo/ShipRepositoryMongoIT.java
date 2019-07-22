@@ -25,7 +25,7 @@ class ShipRepositoryMongoIT {
 	@Test
 	void findAllWithUnitsAndRarity() {
 		
-		List<String> names = shipRepository.findAllNames();
+		List<String> names = shipRepository.findAllNames().collectList().block();
 		assertEquals(2, names.size());
 		assertEquals("Ship 1", names.get(0));
 		assertEquals("Ship 2", names.get(1));

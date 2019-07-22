@@ -6,6 +6,7 @@ import hb.swgohbot.swgoh.api.Ship;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,13 +33,13 @@ public class ShipRepositoryRest implements ShipRepository {
 	
 	
 	@Override
-	public List<String> findAllNames() {
-		return findAll().stream().map(Ship::getName).collect(Collectors.toList());
+	public Flux<String> findAllNames() {
+		return findAll().map(Ship::getName);
 	}
 	
 	
 	@Override
-	public List<Ship> findAll() {
-		return apiClient.getShipList();
+	public Flux<Ship> findAll() {
+		return Flux.fromIterable(apiClient.getShipList());
 	}
 }

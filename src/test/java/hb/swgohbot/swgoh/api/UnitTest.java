@@ -61,7 +61,7 @@ class UnitTest {
 		
 		
 		assertEquals("1234", unit.getId());
-		assertEquals(new Integer(1), unit.getType());
+		assertEquals(Integer.valueOf(1), unit.getType());
 		assertEquals(2, unit.getZetaAbilities().size());
 		assertEquals(2, unit.getPlacedGears().size());
 		assertEquals("2", unit.getPlacedGears().get(1).getGearId());

@@ -25,7 +25,7 @@ class PlayerRepositoryMongoIT {
 	
 	@Test
 	void findAllWithUnitsAndRarity() {
-		List<Player> players = playerRepository.findAllWithUnitsAndRarity(7, "1");
+		List<Player> players = playerRepository.findAllWithUnitsAndRarity(7, "1").collectList().block();
 		assertEquals(1, players.size());
 		assertEquals("1", players.get(0).getUnits().get(0).getId());
 	}

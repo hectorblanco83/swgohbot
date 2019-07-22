@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,8 +54,8 @@ class SearchServiceTest {
 		rjt.setName("Rey Jedi Training");
 		Character rsc = new Character();
 		rsc.setName("Rey (Scavenger)");
-//		when(characterRepository.findAll()).thenReturn(Lists.newArrayList(rjt,rsc));
-		when(shipRepository.findAll()).thenReturn(Lists.newArrayList());
+		when(characterRepository.findAll()).thenReturn(Flux.just(rjt,rsc));
+		when(shipRepository.findAll()).thenReturn(Flux.empty());
 		
 		// when
 		List<BaseCharacter> characters = service.suggestCharacterFromQuery("rey");
@@ -72,8 +73,8 @@ class SearchServiceTest {
 		// given
 		Character vader = new Character();
 		vader.setName(DARTH_VADER_NAME);
-//		when(characterRepository.findAll()).thenReturn(Lists.newArrayList(vader));
-		when(shipRepository.findAll()).thenReturn(Lists.newArrayList());
+		when(characterRepository.findAll()).thenReturn(Flux.just(vader));
+		when(shipRepository.findAll()).thenReturn(Flux.empty());
 		
 		// when
 		List<BaseCharacter> characters = service.suggestCharacterFromQuery(DARTH_VADER_NAME);
@@ -95,8 +96,8 @@ class SearchServiceTest {
 		Player p2 = Player.builder().allyCode(2).name("player 2").unit(u2).build();
 		Player p3 = Player.builder().allyCode(3).name("player 3").unit(u1).build();
 		
-		when(playerRepository.findAllWithUnitsAndRarity(7, "1")).thenReturn(Lists.newArrayList(p1, p3));
-		when(playerRepository.findAllWithUnitsAndRarity(7, "2")).thenReturn(Lists.newArrayList(p2));
+		when(playerRepository.findAllWithUnitsAndRarity(7, "1")).thenReturn(Flux.just(p1, p3));
+		when(playerRepository.findAllWithUnitsAndRarity(7, "2")).thenReturn(Flux.just(p2));
 		
 		// when
 		ArrayList<BaseCharacter> chars = Lists.newArrayList(

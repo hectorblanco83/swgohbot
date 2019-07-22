@@ -42,7 +42,7 @@ class ShipRepositoryRestTest {
 		when(apiClient.getShipList()).thenReturn(list);
 		
 		// when
-		List<String> names = shipRepo.findAllNames();
+		List<String> names = shipRepo.findAllNames().collectList().block();
 		
 		// then
 		assertEquals(2, names.size());

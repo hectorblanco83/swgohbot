@@ -52,7 +52,7 @@ public class DatabaseUpdater {
 		List<Character> characterList = apiClient.getCharacterList();
 		LOGGER.debug("Received characters: " + characterList.size());
 		
-		charRepo.saveAll(characterList);
+		charRepo.saveAll(characterList).collectList().block();
 		LOGGER.info("Database's character list saved!");
 	}
 	
@@ -67,7 +67,7 @@ public class DatabaseUpdater {
 		List<Ship> shipList = apiClient.getShipList();
 		LOGGER.debug("Received ships: " + shipList.size());
 		
-		shipRepo.saveAll(shipList);
+		shipRepo.saveAll(shipList).collectList().block();
 		LOGGER.info("Database's ships list saved!");
 	}
 	
@@ -83,7 +83,7 @@ public class DatabaseUpdater {
 		List<Player> players = guild.getPlayers();
 		LOGGER.debug("Received " + guild.getName() + " guild with " + players.size() + " players");
 		
-		playerRepo.saveAll(players);
+		playerRepo.saveAll(players).collectList().block();
 		LOGGER.info("Database's players list saved!");
 	}
 	

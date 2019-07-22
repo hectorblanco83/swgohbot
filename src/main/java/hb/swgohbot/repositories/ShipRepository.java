@@ -2,6 +2,7 @@ package hb.swgohbot.repositories;
 
 import hb.swgohbot.swgoh.api.Ship;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @Component
 public interface ShipRepository {
 
-	List<String> findAllNames();
+	Flux<String> findAllNames();
 
-	List<Ship> findAll();
+	Flux<Ship> findAll();
 }

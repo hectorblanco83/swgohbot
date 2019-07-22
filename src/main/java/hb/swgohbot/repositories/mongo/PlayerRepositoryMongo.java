@@ -5,7 +5,9 @@ import hb.swgohbot.swgoh.api.Player;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 
@@ -17,7 +19,7 @@ import java.util.List;
  */
 @Component
 @Profile("offline")
-public interface PlayerRepositoryMongo extends MongoRepository<Player, String>, PlayerRepository {
+public interface PlayerRepositoryMongo extends ReactiveMongoRepository<Player, String>, PlayerRepository {
 	
 	
 	@Query(value = 	"{ " +
@@ -31,6 +33,6 @@ public interface PlayerRepositoryMongo extends MongoRepository<Player, String>, 
 			fields = "{name: 1, last_updated: 1, 'units.$': 1}"
 	)
 	@Override
-	List<Player> findAllWithUnitsAndRarity(int rarity, String... unitsId);
+	Flux<Player> findAllWithUnitsAndRarity(int rarity, String... unitsId);
 	
 }

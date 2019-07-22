@@ -41,12 +41,12 @@ class CharacterRepositoryRestTest {
 		);
 		when(apiClient.getCharacterList()).thenReturn(list);
 		
-//		// when
-//		List<String> names = charRepo.findAllNames();
-//
-//		// then
-//		assertEquals(2, names.size());
-//		assertEquals("Char1", names.get(0));
-//		assertEquals("Char2", names.get(1));
+		// when
+		List<String> names = charRepo.findAllNames().collectList().block();
+
+		// then
+		assertEquals(2, names.size());
+		assertEquals("Char1", names.get(0));
+		assertEquals("Char2", names.get(1));
 	}
 }
