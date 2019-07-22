@@ -42,7 +42,7 @@ public class SearchService {
 	
 	public List<BaseCharacter> suggestCharacterFromQuery(String... query) {
 		List<BaseCharacter> allChars = new ArrayList<>();
-		allChars.addAll(characterRepository.findAll());
+//		allChars.addAll(characterRepository.findAll().);
 		allChars.addAll(shipRepository.findAll());
 		
 		// Search by name equals

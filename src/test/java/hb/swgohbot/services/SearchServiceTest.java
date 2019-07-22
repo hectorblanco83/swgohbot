@@ -53,7 +53,7 @@ class SearchServiceTest {
 		rjt.setName("Rey Jedi Training");
 		Character rsc = new Character();
 		rsc.setName("Rey (Scavenger)");
-		when(characterRepository.findAll()).thenReturn(Lists.newArrayList(rjt,rsc));
+//		when(characterRepository.findAll()).thenReturn(Lists.newArrayList(rjt,rsc));
 		when(shipRepository.findAll()).thenReturn(Lists.newArrayList());
 		
 		// when
@@ -72,7 +72,7 @@ class SearchServiceTest {
 		// given
 		Character vader = new Character();
 		vader.setName(DARTH_VADER_NAME);
-		when(characterRepository.findAll()).thenReturn(Lists.newArrayList(vader));
+//		when(characterRepository.findAll()).thenReturn(Lists.newArrayList(vader));
 		when(shipRepository.findAll()).thenReturn(Lists.newArrayList());
 		
 		// when

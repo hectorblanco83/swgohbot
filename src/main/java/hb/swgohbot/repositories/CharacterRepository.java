@@ -2,6 +2,7 @@ package hb.swgohbot.repositories;
 
 import hb.swgohbot.swgoh.api.Character;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 
@@ -14,8 +15,8 @@ import java.util.List;
 @Component
 public interface CharacterRepository {
 
-	List<String> findAllNames();
+	Flux<String> findAllNames();
 	
-	List<Character> findAll();
+	Flux<Character> findAll();
 
 }

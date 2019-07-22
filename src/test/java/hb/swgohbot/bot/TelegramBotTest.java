@@ -74,7 +74,7 @@ class TelegramBotTest {
 		MessageContext context = MessageContext.newContext(update, endUser, CHAT_ID, "vader");
 		
 		when(sender.execute(ArgumentMatchers.any())).thenReturn(update.getMessage());
-		when(characterRepository.findAll()).thenReturn(new ArrayList<>());
+		//when(characterRepository.findAll()).thenReturn(new ArrayList<>());
 		when(shipRepository.findAll()).thenReturn(new ArrayList<>());
 		
 		// when

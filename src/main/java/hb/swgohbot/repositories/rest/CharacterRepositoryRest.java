@@ -6,6 +6,7 @@ import hb.swgohbot.swgoh.api.Character;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,13 +33,14 @@ public class CharacterRepositoryRest implements CharacterRepository {
 	
 	
 	@Override
-	public List<String> findAllNames() {
-		return findAll().stream().map(Character::getName).collect(Collectors.toList());
+	public Flux<String> findAllNames() {
+		return findAll().map(Character::getName);
 	}
 	
 	
 	@Override
-	public List<Character> findAll() {
-		return apiClient.getCharacterList();
+	public Flux<Character> findAll() {
+		return Flux.fromIterable(apiClient.getCharacterList());
 	}
+	
 }
