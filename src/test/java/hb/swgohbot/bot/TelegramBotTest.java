@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
+import org.telegram.abilitybots.api.db.MapDBContext;
 import org.telegram.abilitybots.api.objects.MessageContext;
 import org.telegram.abilitybots.api.sender.MessageSender;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -53,7 +54,7 @@ class TelegramBotTest {
 	
 	@BeforeEach
 	void setUp() {
-		bot = new TelegramBot("1", "1");
+		bot = new TelegramBot("1", "1", MapDBContext.onlineInstance("TestDB"));
 		sender = mock(MessageSender.class);
 		bot.setSender(sender);
 		
